@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=0x03-interrupts.X
+PROJECTNAME=0x03-interrupts
 
 # Active Configuration
 DEFAULTCONF=default
