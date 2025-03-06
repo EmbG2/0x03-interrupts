@@ -68,6 +68,22 @@ void part_1(){
     }
 }
 
+void part_2(){
+    // ASSIGNMENT PART 1
+    // Set the TIMER2 for LED2
+    tmr_setup_period(TIMER2, 200);
+    RPINR0bits.INT1R = 18;
+    INTCON2bits.INT1EP = 0;         // 1 = Falling edge; 0 = Rising edge
+    
+    IFS0bits.INT1IF = 0;              // Reset the interrupt's flag
+    IEC0bits.INT1IE = 1;              // Activate TIMER2's interrupt
+    
+    while(1){
+        LATGbits.LATG9 ^= 1;
+        tmr_wait_period(TIMER2);
+    }
+}
+
 void __attribute__((__interrupt__, auto_psv)) _T2Interrupt(void) {
     IFS0bits.T2IF = 0;              // Reset the flag of the interrupt
     a++;
@@ -76,4 +92,10 @@ void __attribute__((__interrupt__, auto_psv)) _T2Interrupt(void) {
         LATGbits.LATG9 ^= 1;
         a = 0;
     }
+}
+
+void __attribute__((__interrupt__, auto_psv)) _INT1Interrupt(void) {
+    LATGbits.LATG9 ^= 1;
+    
+    IFS0bits.INT1IF = 0;            // Reset the flag of the interrupt
 }
