@@ -65,14 +65,12 @@
 // TODO Insert declarations or function prototypes (right here) to leverage 
 // live documentation
 void tmr_setup_period(int timer, int ms);
+void tmr_turn(int timer, int value);
 void tmr_wait_period(int timer);
 void tmr_wait_ms(int timer, int ms);
 int tmr_wait_period_3(int timer);
 void tmr_wait_ms_3(int timer, int ms);
 
-void tmr_setup(int timer, int ms);
-void tmr_start(int timer);
-void tmr_stop(int timer);
 
 #ifdef	__cplusplus
 extern "C" {

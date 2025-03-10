@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <executable name="dist/default/production/0x03-interrupts.production.elf">
+  <executable name="dist/default/production/0x03-interrupts-best-branch.production.elf">
     <memory name="data">
       <units>bytes</units>
       <length>53248</length>
-      <used>4</used>
-      <free>53244</free>
+      <used>6</used>
+      <free>53242</free>
     </memory>
     <memory name="program">
       <units>bytes</units>
       <length>524544</length>
-      <used>4248</used>
-      <free>520296</free>
+      <used>4188</used>
+      <free>520356</free>
     </memory>
   </executable>
 </project>

@@ -44,14 +44,14 @@ void tmr_setup_period(int timer, int ms) {
             T1CONbits.TCKPS = prescaler_type;   // Set the Timer Clock Prescaler value
             PR1 = period;                       // Period Register for Timer1
             TMR1 = 0;                           // Reset the number of tick counted by the timer
-            T1CONbits.TON = 1;                  // Turn on the Timer1 (start counting)
+//            T1CONbits.TON = 1;                  // Turn on the Timer1 (start counting)
             break;
         case TIMER2:
             T2CONbits.TON = 0;
             T2CONbits.TCKPS = prescaler_type;
             PR2 = period;
             TMR2 = 0;
-            T2CONbits.TON = 1;
+//            T2CONbits.TON = 1;
             break;
     }
 }
@@ -71,6 +71,7 @@ void tmr_wait_period(int timer){
 
 void tmr_wait_ms(int timer, int ms){
     tmr_setup_period(timer, ms);
+    tmr_turn(timer, 1);
     tmr_wait_period(timer);
     if (timer == TIMER1){
         T1CONbits.TON = 0;
@@ -107,69 +108,19 @@ void tmr_wait_ms_3(int timer, int ms){
     while (ms > 0) {
         int wait_time = (ms > 200) ? 200 : ms; 
         tmr_setup_period(timer, wait_time);
+        tmr_turn(timer, 1);
         expired = tmr_wait_period_3(timer);
         ms -= wait_time;
     }
 }
 
-void tmr_setup(int timer, int ms){
-    unsigned int prescaler;
-    double period;
-    // Set the maximum period as <200 ms>
-    if (ms > 200){
-        ms = 200;
-    }
-    // Set the pre-scaler layers and the corresponding type
-    prescaler = 1;
-    int prescaler_type = 0;
-    if(ms > 2) {
-        prescaler *= 8;     // 8
-        prescaler_type++;   // 1
-    }
-    if(ms > 10) {
-        prescaler *= 8;     // 64
-        prescaler_type++;   // 2
-    }
-    if(ms > 50) {
-        prescaler *= 4;     // 256
-        prescaler_type++;   // 3
-    }
-    period  = ((double)FCY / (prescaler * 1000)) * ms;
-
+void tmr_turn(int timer, int value){
     switch(timer){
         case TIMER1:
-            T1CONbits.TON = 0;                  // Turn off the Timer1 (stop counting)
-            T1CONbits.TCKPS = prescaler_type;   // Set the Timer Clock Prescaler value
-            PR1 = period;                       // Period Register for Timer1
-            TMR1 = 0;
+            T1CONbits.TON = value;                  // Turn on the Timer1 (start counting)
             break;
         case TIMER2:
-            T2CONbits.TON = 0;
-            T2CONbits.TCKPS = prescaler_type;
-            PR2 = period;
-            TMR2 = 0;
+            T2CONbits.TON = value;
             break;
     }
-}
-
-void tmr_start(int timer){
-    switch(timer){
-        case TIMER1:
-            T1CONbits.TON = 1;                  // Turn on the Timer1 (start counting)
-            break;
-        case TIMER2:
-            T2CONbits.TON = 1;
-            break;
-    }    
-}
-
-void tmr_stop(int timer){
-    switch(timer){
-        case TIMER1:
-            T1CONbits.TON = 0;
-            break;
-        case TIMER2:
-            T2CONbits.TON = 0;
-            break;
-    }        
 }

@@ -34,7 +34,6 @@ int main(void) {
         }
         case 2: {
             part_2();
-            break;
         }
         default: {
             break;
@@ -43,40 +42,43 @@ int main(void) {
     return 0;
 }
 
+// ASSIGNMENT PART 1
 void part_1(){
-    // ASSIGNMENT PART 1
-    // Set the TIMER1 for LED1
-    tmr_setup(TIMER1, 200);
-    // Set the TIMER2 for LED2
-    tmr_setup(TIMER2, 200);
     
+    // Set the TIMER1 for LED1
+    tmr_setup_period(TIMER1, 200);
+    tmr_turn(TIMER1, 1);
+    
+    // Set the TIMER2 for LED2
+    tmr_setup_period(TIMER2, 10);
+        
     IFS0bits.T2IF = 0;              // Reset the interrupt's flag
     IEC0bits.T2IE = 1;              // Activate TIMER2's interrupt
     
-    tmr_start(TIMER1);
-    tmr_start(TIMER2);              // Activate TIMER2
+    tmr_turn(TIMER2, 1);
+    
     while(1){
         LATAbits.LATA0 ^= 1;
         tmr_wait_period(TIMER1);
     }
 }
 
+// ASSIGNMENT PART 2
 void part_2(){
-    // Set the TIMER2 for LED2
+    tmr_setup_period(TIMER1, 10);
+    
+    // Set the TIMER2 for LED2    
     tmr_setup_period(TIMER2, 200);
-    tmr_setup(TIMER1, 200);
+    tmr_turn(TIMER2, 1);
+    
     RPINR0bits.INT1R = 88;
-    INTCON2bits.INT1EP = 1;         // 1 = Falling edge; 0 = Rising edge
-
+    INTCON2bits.INT1EP = 0;         // 1 = Falling edge; 0 = Rising edge
+    
     IFS1bits.INT1IF = 0;              // Reset the interrupt's flag
-    IEC1bits.INT1IE = 1;              // Activate external interrupt
+    IEC1bits.INT1IE = 1;              // Activate TIMER2's interrupt
     
     while(1){
-        a++;
-        if (a == 20) {
-            LATGbits.LATG9 ^= 1;
-            a = 0;
-        }
+        LATGbits.LATG9 ^= 1;
         tmr_wait_period(TIMER2);
     }
 }
@@ -92,10 +94,17 @@ void __attribute__((__interrupt__, auto_psv)) _T2Interrupt(void) {
 }
 
 void __attribute__((__interrupt__, auto_psv)) _INT1Interrupt(void) {
-    IFS1bits.INT1IF = 0;            // Reset the interrupt flag
-    t2_status = PORTEbits.RE8;
-    if (t2_status && !t2_status_prev){
-        LATGbits.LATG9 ^= 1;
+    IFS1bits.INT1IF = 0;            // Reset the flag of the interrupt
+    IFS0bits.T1IF = 0;              // Reset the interrupt's flag
+    IEC0bits.T1IE = 1;              // Activate TIMER1's interrupt
+    tmr_turn(TIMER1, 1);
+}
+
+void __attribute__((__interrupt__, auto_psv)) _T1Interrupt(void) {
+    IFS0bits.T1IF = 0;              // Reset the flag of the interrupt
+    tmr_turn(TIMER1, 0);
+    if (PORTEbits.RE8){
+        LATAbits.LATA0 ^= 1;
     }
-    t2_status_prev = t2_status;
+    IEC0bits.T1IE = 0;
 }
