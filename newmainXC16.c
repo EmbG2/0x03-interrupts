@@ -13,6 +13,7 @@
 #define FCY 72000000UL
 
 int a = 0;
+uint8_t t2_status, t2_status_prev;
 
 void part_1();
 void part_2();
@@ -91,9 +92,10 @@ void __attribute__((__interrupt__, auto_psv)) _T2Interrupt(void) {
 }
 
 void __attribute__((__interrupt__, auto_psv)) _INT1Interrupt(void) {
-    tmr_start(TIMER1);
-    tmr_wait_period(TIMER1);
-    tmr_stop(TIMER1);
-    IFS1bits.INT1IF = 0; // Reset the interrupt flag
-    LATGbits.LATG9 ^= 1; // Toggle LED
+    IFS1bits.INT1IF = 0;            // Reset the interrupt flag
+    t2_status = PORTEbits.RE8;
+    if (t2_status && !t2_status_prev){
+        LATGbits.LATG9 ^= 1;
+    }
+    t2_status_prev = t2_status;
 }
