@@ -141,15 +141,13 @@ void tmr_setup(int timer, int ms){
             T1CONbits.TON = 0;                  // Turn off the Timer1 (stop counting)
             T1CONbits.TCKPS = prescaler_type;   // Set the Timer Clock Prescaler value
             PR1 = period;                       // Period Register for Timer1
-            TMR1 = 0;                           // Reset the number of tick counted by the timer
-            T1CONbits.TON = 1;                  // Turn on the Timer1 (start counting)
+            TMR1 = 0;
             break;
         case TIMER2:
             T2CONbits.TON = 0;
             T2CONbits.TCKPS = prescaler_type;
             PR2 = period;
             TMR2 = 0;
-            T2CONbits.TON = 1;
             break;
     }
 }
